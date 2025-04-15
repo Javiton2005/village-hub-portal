@@ -1,16 +1,12 @@
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "sonner";
 import Layout from "@/components/Layout";
+import { useSimpleToast } from "@/components/SimpleToast";
 
 const Register = () => {
   const navigate = useNavigate();
+  const toast = useSimpleToast();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -26,17 +22,16 @@ const Register = () => {
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({ 
+      ...prev, 
+      [name]: type === 'checkbox' ? checked : value 
+    }));
     
     // Clear errors when user types
     if (name === 'password' || name === 'confirmPassword') {
       setErrors((prev) => ({ ...prev, [name]: '' }));
     }
-  };
-
-  const handleCheckboxChange = (checked: boolean) => {
-    setFormData((prev) => ({ ...prev, agreeTerms: checked }));
   };
 
   const validateForm = () => {
@@ -83,100 +78,109 @@ const Register = () => {
     <Layout>
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-md mx-auto">
-          <Card>
-            <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl font-bold text-center">Create an account</CardTitle>
-              <CardDescription className="text-center">
+          <div className="bg-white shadow-md rounded-lg p-6">
+            <div className="space-y-1 mb-4">
+              <h2 className="text-2xl font-bold text-center">Create an account</h2>
+              <p className="text-center text-gray-600">
                 Enter your information to get started with VillageHub
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Full Name</Label>
-                  <Input 
-                    id="name"
-                    name="name"
-                    type="text" 
-                    placeholder="John Doe" 
-                    required
-                    value={formData.name}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input 
-                    id="email"
-                    name="email"
-                    type="email" 
-                    placeholder="name@example.com" 
-                    required
-                    value={formData.email}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input 
-                    id="password"
-                    name="password" 
-                    type="password" 
-                    required
-                    value={formData.password}
-                    onChange={handleChange}
-                  />
-                  {errors.password && (
-                    <p className="text-sm text-red-500">{errors.password}</p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">Confirm Password</Label>
-                  <Input 
-                    id="confirmPassword"
-                    name="confirmPassword" 
-                    type="password" 
-                    required
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                  />
-                  {errors.confirmPassword && (
-                    <p className="text-sm text-red-500">{errors.confirmPassword}</p>
-                  )}
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="agreeTerms" 
-                    checked={formData.agreeTerms}
-                    onCheckedChange={handleCheckboxChange}
-                    required
-                  />
-                  <Label htmlFor="agreeTerms" className="text-sm font-normal">
-                    I agree to the{" "}
-                    <Link to="/terms" className="text-primary hover:underline">
-                      Terms of Service
-                    </Link>{" "}
-                    and{" "}
-                    <Link to="/privacy" className="text-primary hover:underline">
-                      Privacy Policy
-                    </Link>
-                  </Label>
-                </div>
-                <Button type="submit" className="w-full" disabled={isLoading || !formData.agreeTerms}>
-                  {isLoading ? "Creating Account..." : "Create Account"}
-                </Button>
-              </form>
-
-              <div className="mt-4 text-center text-sm">
-                <p>
-                  Already have an account?{" "}
-                  <Link to="/login" className="text-primary hover:underline">
-                    Sign in
-                  </Link>
-                </p>
+              </p>
+            </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="name" className="block text-sm font-medium">Full Name</label>
+                <input 
+                  id="name"
+                  name="name"
+                  type="text" 
+                  placeholder="John Doe" 
+                  required
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="w-full p-2 border border-gray-300 rounded"
+                />
               </div>
-            </CardContent>
-          </Card>
+              <div className="space-y-2">
+                <label htmlFor="email" className="block text-sm font-medium">Email</label>
+                <input 
+                  id="email"
+                  name="email"
+                  type="email" 
+                  placeholder="name@example.com" 
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full p-2 border border-gray-300 rounded"
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="password" className="block text-sm font-medium">Password</label>
+                <input 
+                  id="password"
+                  name="password" 
+                  type="password" 
+                  required
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="w-full p-2 border border-gray-300 rounded"
+                />
+                {errors.password && (
+                  <p className="text-sm text-red-500">{errors.password}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="confirmPassword" className="block text-sm font-medium">Confirm Password</label>
+                <input 
+                  id="confirmPassword"
+                  name="confirmPassword" 
+                  type="password" 
+                  required
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className="w-full p-2 border border-gray-300 rounded"
+                />
+                {errors.confirmPassword && (
+                  <p className="text-sm text-red-500">{errors.confirmPassword}</p>
+                )}
+              </div>
+              <div className="flex items-center space-x-2">
+                <input 
+                  id="agreeTerms"
+                  name="agreeTerms"
+                  type="checkbox" 
+                  checked={formData.agreeTerms}
+                  onChange={handleChange}
+                  required
+                  className="h-4 w-4 text-green-600"
+                />
+                <label htmlFor="agreeTerms" className="text-sm font-normal">
+                  I agree to the{" "}
+                  <Link to="/terms" className="text-green-600 hover:underline">
+                    Terms of Service
+                  </Link>{" "}
+                  and{" "}
+                  <Link to="/privacy" className="text-green-600 hover:underline">
+                    Privacy Policy
+                  </Link>
+                </label>
+              </div>
+              <button 
+                type="submit" 
+                className="w-full p-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+                disabled={isLoading || !formData.agreeTerms}
+              >
+                {isLoading ? "Creating Account..." : "Create Account"}
+              </button>
+            </form>
+
+            <div className="mt-4 text-center text-sm">
+              <p>
+                Already have an account?{" "}
+                <Link to="/login" className="text-green-600 hover:underline">
+                  Sign in
+                </Link>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </Layout>
