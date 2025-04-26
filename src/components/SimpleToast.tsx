@@ -1,7 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
+import './SimpleToast.css';
 
 export interface ToastProps {
+  id?: number;
   message: string;
   type: 'success' | 'error' | 'info';
   duration?: number;
@@ -37,14 +39,11 @@ export const SimpleToast: React.FC = () => {
   if (toasts.length === 0) return null;
 
   return (
-    <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
-      {toasts.map((toast: any) => (
+    <div className="toast-container">
+      {toasts.map((toast: ToastProps) => (
         <div 
           key={toast.id}
-          className={`p-4 rounded shadow-md animate-in slide-in-from-top-5 
-            ${toast.type === 'success' ? 'bg-green-500 text-white' : 
-              toast.type === 'error' ? 'bg-red-500 text-white' : 
-              'bg-blue-500 text-white'}`}
+          className={`toast toast-${toast.type}`}
         >
           {toast.message}
         </div>

@@ -1,16 +1,12 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  MapPin, Users, Calendar, Globe, ArrowLeft, 
-  Heart, Share2, MessageSquare, Star, Clock, MapIcon, Thermometer 
-} from "lucide-react";
-import { toast } from "sonner";
+import { MapPin, Users, Calendar, Globe, ArrowLeft, 
+  Heart, Share2, MessageSquare, Star, Clock, MapIcon, Thermometer } from "lucide-react";
 import Layout from "@/components/Layout";
-import { getVillageById, villages, VillageProps } from "@/data/villagesData";
+import { useSimpleToast } from "@/components/SimpleToast";
+import { getVillageById, villages } from "@/data/villagesData";
+import { VillageProps } from "@/types/village";
+import "./VillageDetails.css";
 
 const VillageDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -18,12 +14,11 @@ const VillageDetails = () => {
   const [village, setVillage] = useState<VillageProps | null>(null);
   const [loading, setLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
+  const toast = useSimpleToast();
 
   useEffect(() => {
-    // Simulate API fetch
     const fetchVillage = async () => {
       try {
-        // Short delay to simulate API call
         await new Promise(resolve => setTimeout(resolve, 500));
         
         if (id) {
@@ -57,17 +52,14 @@ const VillageDetails = () => {
         text: `Check out ${village?.name} in ${village?.location}, ${village?.country} on VillageHub!`,
         url: window.location.href,
       }).catch(() => {
-        // Fallback if share fails
         toast.success("Link copied to clipboard");
       });
     } else {
-      // Fallback for browsers that don't support navigator.share
       navigator.clipboard.writeText(window.location.href);
       toast.success("Link copied to clipboard");
     }
   };
 
-  // Simulated related villages
   const relatedVillages = villages
     .filter(v => v.id !== id && (
       v.country === village?.country || 
@@ -119,7 +111,6 @@ const VillageDetails = () => {
             Back
           </Button>
           
-          {/* Hero section */}
           <div className="relative h-[500px] rounded-xl overflow-hidden mb-8">
             <img 
               src={village.imageUrl} 
@@ -129,7 +120,7 @@ const VillageDetails = () => {
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
             <div className="absolute bottom-0 left-0 p-6 text-white">
               <h1 className="text-4xl font-bold mb-2">{village.name}</h1>
-              <div className="flex items-center gap-2 mb-3">
+              <div className="flex items-center text-muted-foreground mt-1">
                 <MapPin className="h-5 w-5" />
                 <span>{village.location}, {village.country}</span>
               </div>
@@ -143,7 +134,6 @@ const VillageDetails = () => {
             </div>
           </div>
 
-          {/* Main content */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
               <div className="bg-card shadow-sm rounded-lg p-6 mb-6">
@@ -275,7 +265,6 @@ const VillageDetails = () => {
                 </Tabs>
               </div>
               
-              {/* Reviews section */}
               <div className="bg-card shadow-sm rounded-lg p-6">
                 <h2 className="text-xl font-bold mb-4">Visitor Reviews</h2>
                 <div className="flex items-center gap-2 mb-6">
@@ -289,7 +278,6 @@ const VillageDetails = () => {
                 </div>
                 
                 <div className="space-y-4 mb-6">
-                  {/* Sample reviews */}
                   <div className="border-b pb-4">
                     <div className="flex justify-between items-center mb-2">
                       <div className="font-medium">Sarah Johnson</div>
@@ -331,9 +319,7 @@ const VillageDetails = () => {
               </div>
             </div>
             
-            {/* Sidebar */}
             <div className="space-y-6">
-              {/* Map placeholder */}
               <div className="bg-card shadow-sm rounded-lg overflow-hidden">
                 <div className="h-60 bg-muted flex items-center justify-center">
                   <MapIcon className="h-12 w-12 text-muted-foreground" />
@@ -349,7 +335,6 @@ const VillageDetails = () => {
                 </div>
               </div>
               
-              {/* Weather */}
               <div className="bg-card shadow-sm rounded-lg p-4">
                 <h3 className="font-medium mb-3">Current Weather</h3>
                 <div className="flex items-center justify-between">
@@ -395,7 +380,6 @@ const VillageDetails = () => {
                 </div>
               </div>
               
-              {/* Related villages */}
               <div className="bg-card shadow-sm rounded-lg p-4">
                 <h3 className="font-medium mb-3">Similar Villages</h3>
                 <div className="space-y-3">
